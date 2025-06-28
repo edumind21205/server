@@ -162,7 +162,6 @@ router.get("/download-lesson/:lessonId", verifyToken, async (req, res) => {
   try {
     const lessonId = req.params.lessonId;
     const lesson = await require("../Models/lesson").findById(lessonId);
-    // console.log(lesson);
     if (!lesson) return res.status(404).json({ message: "Lesson not found" });
     // Only allow download for video/pdf
     if (!lesson.contentType || !["video", "pdf"].includes(lesson.contentType.toLowerCase())) {
@@ -181,27 +180,35 @@ router.get("/download-lesson/:lessonId", verifyToken, async (req, res) => {
         let resourceType = "raw";
         if (lesson.contentType.toLowerCase() === "pdf") {
           // Extract publicId WITH .pdf extension (since your Cloudinary resource has .pdf in publicId)
-          let matches = lesson.contentURL.match(/\/upload\/(?:v\d+\/)?(.+\.pdf)/i);
+          // Improved regex to handle possible folder structure and versioning
+          let matches = lesson.contentURL.match(/\/upload\/(?:v\d+\/)?([\w\/-]+\.pdf)/i);
           publicId = matches && matches[1] ? matches[1] : null;
           if (!publicId) {
-            return res.status(400).json({ message: "Invalid Cloudinary URL for download." });
+            // Try fallback extraction (for edge cases)
+            let fallback = lesson.contentURL.split("/upload/")[1];
+            if (fallback && fallback.endsWith(".pdf")) publicId = fallback;
           }
-          // Debug log
-          // console.log("[DEBUG] Extracted publicId for PDF:", publicId);
+          if (!publicId) {
+            return res.status(400).json({ message: "Invalid Cloudinary URL for download (PDF publicId extraction failed)." });
+          }
           // Always use resource_type: 'raw' for PDF
-          const signedUrl = cloudinary.utils.private_download_url(
-            publicId,
-            "raw",
-            {
-              type: "authenticated",
-              attachment: true,
-              expires_at: Math.floor(Date.now() / 1000) + 60 * 5,
-            }
-          );
-          return res.json({ url: signedUrl });
+          try {
+            const signedUrl = cloudinary.utils.private_download_url(
+              publicId,
+              "raw",
+              {
+                type: "authenticated",
+                attachment: true,
+                expires_at: Math.floor(Date.now() / 1000) + 60 * 5,
+              }
+            );
+            return res.json({ url: signedUrl });
+          } catch (err) {
+            console.error("Cloudinary PDF signed URL error:", err);
+            return res.status(500).json({ message: "Failed to generate signed PDF download URL.", error: err.message });
+          }
         } else if (lesson.contentType.toLowerCase() === "video") {
           // For videos, return the original contentURL (public streaming URL)
-          console.log("[DEBUG] Returning public video URL (no signed download):", lesson.contentURL);
           return res.json({ url: lesson.contentURL });
         }
         return res.json({ url: lesson.contentURL });
