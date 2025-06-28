@@ -59,6 +59,23 @@ router.post("/upload", verifyToken, checkRole(["student"]), require("../utils/up
   if (!req.file) {
     return res.status(400).json({ success: false, message: "No file uploaded" });
   }
+  // If you want to upload to Cloudinary here, do:
+  /*
+  const cloudinary = require("../utils/cloudinary");
+  let uploadResult;
+  if (req.file.mimetype === "application/pdf") {
+    uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: "raw",
+      folder: "edumids/assignments"
+    });
+  } else {
+    uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: "auto",
+      folder: "edumids/assignments"
+    });
+  }
+  return res.status(200).json({ success: true, fileUrl: uploadResult.secure_url });
+  */
   res.status(200).json({ success: true, fileUrl: req.file.path });
 });
 

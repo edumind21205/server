@@ -182,4 +182,32 @@ router.get("/my-certificates", auth, async (req, res) => {
   }
 });
 
+// ✅ Get a single certificate by certificateId (enrollment _id)
+// router.get("/my-certificate/:certificateId", auth, async (req, res) => {
+//   try {
+//     const { certificateId } = req.params;
+//     const enrollment = await Enrollment.findOne({
+//       _id: certificateId,
+//       student: req.user.id,
+//       certificateIssued: true
+//     }).populate("course");
+
+//     if (!enrollment) {
+//       return res.status(404).json({ message: "Certificate not found" });
+//     }
+
+//     const certificate = {
+//       certificateId: enrollment._id,
+//       courseName: enrollment.course?.title || "Unknown Course",
+//       organization: enrollment.course?.organization || "EduMids",
+//       dateEarned: enrollment.certificateIssued && enrollment.updatedAt ? enrollment.updatedAt : enrollment.createdAt,
+//       courseId: enrollment.course?._id
+//     };
+
+//     res.status(200).json({ certificate });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server Error", error });
+//   }
+// });
+
 module.exports = router;

@@ -47,6 +47,15 @@ router.post(
             return res.status(400).json({ message: "Uploaded file is not a valid PDF." });
           }
         }
+        // If uploading to Cloudinary here, ensure resource_type: "raw"
+        /*
+        const cloudinary = require("../utils/cloudinary");
+        const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+          resource_type: "raw",
+          folder: "edumids/lessons"
+        });
+        contentURL = uploadResult.secure_url;
+        */
       }
 
       // Validate required fields
