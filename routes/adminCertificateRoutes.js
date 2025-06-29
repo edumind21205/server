@@ -48,7 +48,7 @@ router.delete("/revoke-certificate/:enrollmentId", verifyToken, checkRole(["admi
       await enrollment.save();
   
       // Send email notification
-      const emailSubject = "Certificate Revoked - EduMids";
+      const emailSubject = "Certificate Revoked - EduMinds";
       const emailText = `Dear ${enrollment.student.name},\n\nYour certificate for the course "${enrollment.course.title}" has been revoked. Please contact support for details.\n\nRegards,\nEduMids Team`;
   
       await sendEmail(enrollment.student.email, emailSubject, emailText);
@@ -98,7 +98,7 @@ router.get("/revoked-certificates", verifyToken, checkRole(["admin"]), async (re
       await enrollment.save();
 
       // Send email notification
-      const emailSubject = "Certificate Re-Issued - EduMids";
+      const emailSubject = "Certificate Re-Issued - EduMinds";
       const emailText = `Dear ${enrollment.student.name},\n\nYour certificate for the course \"${enrollment.course.title}\" has been successfully re-issued. You can now download it from your dashboard.\n\nBest Regards,\nEduMids Team`;
 
       await sendEmail(enrollment.student.email, emailSubject, emailText);

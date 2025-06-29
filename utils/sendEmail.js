@@ -14,7 +14,7 @@ const sendEmail = async (to, subject, text) => {
     });
 
     await transporter.sendMail({
-      from: `"EduMids" <${process.env.SMTP_USER}>`,
+      from: `"EduMinds" <${process.env.SMTP_USER}>`,
       to,
       subject,
       text,

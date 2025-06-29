@@ -110,7 +110,7 @@ app.use("/api/search", searchRoutes); // Use search routes
 
 // Default Route
 app.get("/", (req, res) => {
-  res.send("🎉 EduMids API is running...");
+  res.send("🎉 EduMinds API is running...");
 });
 
 // Start the Server

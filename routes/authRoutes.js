@@ -30,13 +30,13 @@ router.post("/register", registerValidation, async (req, res) => {
     await user.save();
 
     // Notify the user
-    await notifyUser(user._id, "🎉 Welcome to EduMids! Start exploring courses now.");
+    await notifyUser(user._id, "🎉 Welcome to EduMinds! Start exploring courses now.");
 
     // Send welcome email
     await sendEmail(
       user.email,
-      "Welcome to EduMids!",
-      `Hi ${user.name},\n\nWelcome to EduMids! Start exploring courses now.\n\nBest regards,\nEduMids Team`
+      "Welcome to EduMinds!",
+      `Hi ${user.name},\n\nWelcome to EduMinds! Start exploring courses now.\n\nBest regards,\nEduMids Team`
     );
 
     // Generate JWT token (same as login)
@@ -70,8 +70,8 @@ router.post("/login", loginValidation, async (req, res) => {
     // Send login notification email
     await sendEmail(
       user.email,
-      "EduMids Login Notification",
-      `Hi ${user.name},\n\nYou have successfully logged in to your EduMids account.\n\nIf this wasn't you, please contact support immediately.\n\nBest regards,\nEduMids Team`
+      "EduMinds Login Notification",
+      `Hi ${user.name},\n\nYou have successfully logged in to your EduMinds account.\n\nIf this wasn't you, please contact support immediately.\n\nBest regards,\nEduMids Team`
     );
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -142,8 +142,8 @@ router.delete("/delete-profile", auth, async (req, res) => {
     // Send account deletion email
     await sendEmail(
       deletedUser.email,
-      "EduMids Account Deleted",
-      `Hi ${deletedUser.name},\n\nYour EduMids account has been deleted. We're sorry to see you go!\n\nIf this was a mistake, please contact our support.\n\nBest regards,\nEduMids Team`
+      "EduMinds Account Deleted",
+      `Hi ${deletedUser.name},\n\nYour EduMinds account has been deleted. We're sorry to see you go!\n\nIf this was a mistake, please contact our support.\n\nBest regards,\nEduMids Team`
     );
 
     res.json({ message: "Account deleted successfully" });
@@ -180,13 +180,24 @@ router.post("/forgot-password", async (req, res) => {
     // Send email
     await sendEmail(
       user.email,
-      "EduMids Password Reset",
+      "EduMinds Password Reset",
       `Hi ${user.name},\n\nYou requested a password reset. Click the link below to reset your password:\n\n${resetUrl}\n\nThis link will expire in 1 hour.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nEduMids Team`
     );
 
     res.json({ message: "If an account exists with that email, you will receive a password reset link shortly." });
   } catch (error) {
     console.error("Forgot password error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+// 🛡 Get current user role/info (for frontend role checks)
+router.get("/me", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("role name email");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ role: user.role, name: user.name, email: user.email });
+  } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
