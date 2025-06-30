@@ -33,14 +33,19 @@ router.post("/ask", verifyToken, checkRole(["student"]), async (req, res) => {
 });
 
 // TEACHER: Answer a question from your course
-router.post("/answer/:questionId", verifyToken, checkRole(["teacher"]), async (req, res) => {
+router.post("/answer/:questionId", verifyToken, checkRole(["teacher","admin"]), async (req, res) => {
   try {
     const { text } = req.body;
     const question = await Question.findById(req.params.questionId).populate("course");
     if (!question) return res.status(404).json({ message: "Question not found" });
 
-    if (question.course.createdBy.toString() !== req.user.id)
+    // Allow teacher to answer only their own course, but admin can answer any
+    if (
+      req.user.role === "teacher" &&
+      question.course.createdBy.toString() !== req.user.id
+    ) {
       return res.status(403).json({ message: "You can't answer this question" });
+    }
 
     question.answers.push({ answeredBy: req.user.id, text });
     question.status = "answered";
