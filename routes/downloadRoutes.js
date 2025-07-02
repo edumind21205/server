@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Enrollment = require("../Models/Enrollment");
 const { Course } = require("../Models/course");
+
 const { verifyToken, checkRole } = require("../middleware/authMiddleware"); // Correct import
 const notifyUser = require("../utils/notifyUser");
 const Progress = require("../Models/Progress"); // Import Progress model

@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const { verifyToken } = require("../middleware/authMiddleware");
-const DownloadHistory = require("../Models/DownloadHistory"); 
+const DownloadHistory = require("../Models/downloadHistory");
 const Lesson = require("../Models/lesson");
 const router = express.Router();
 
