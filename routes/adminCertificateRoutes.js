@@ -14,11 +14,12 @@ router.get("/issued-certificates", verifyToken, checkRole(["admin"]), async (req
       .populate("student", "name email")
       .populate("course", "title");
 
+    // Defensive: handle missing student or course
     const issuedCertificates = enrollments.map((enrollment) => ({
-      enrollmentId: enrollment._id, // <-- Add this line
-      studentName: enrollment.student.name,
-      studentEmail: enrollment.student.email,
-      courseTitle: enrollment.course.title,
+      enrollmentId: enrollment._id,
+      studentName: enrollment.student?.name || "Unknown Student",
+      studentEmail: enrollment.student?.email || "-",
+      courseTitle: enrollment.course?.title || "Unknown Course",
       dateCompleted: enrollment.updatedAt,
     }));
 

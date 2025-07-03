@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const swaggerSetup = require('./config/swaggerSetup');
 
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
@@ -40,6 +41,9 @@ app.use(cors({
   origin: true,             // Allows all origins when combined with credentials
   credentials: true         // Allows cookies, authorization headers, etc.
 }));
+
+// Swagger Docs
+swaggerSetup(app);
 
 // Connect to MongoDB
 connectDB();
