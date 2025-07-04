@@ -175,8 +175,8 @@ router.post("/forgot-password", async (req, res) => {
     await user.save();
 
     // Construct reset link (adjust frontend URL as needed)
-    const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/auth/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
-
+    const resetUrl = `${process.env.FRONTEND_URL || "https://eduminds-production-180d.up.railway.app"}/auth/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+// http://localhost:5173
     // Send email
     await sendEmail(
       user.email,

@@ -12,7 +12,6 @@ router.get("/all", verifyToken, async (req, res) => {
   const q = req.query.q ? req.query.q.trim() : "";
   if (!q) return res.json({ courses: [], lessons: [], quizzes: [], assignments: [] });
   try {
-    // Search Courses
     const courses = await Course.find({
       $or: [
         { title: { $regex: q, $options: "i" } },
@@ -21,7 +20,6 @@ router.get("/all", verifyToken, async (req, res) => {
       ],
     }).limit(10);
 
-    // Search Lessons
     const lessons = await Lesson.find({
       $or: [
         { title: { $regex: q, $options: "i" } },
